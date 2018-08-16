@@ -35,6 +35,8 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
     Button btnOpenCamera;
     TextView txtResultBody;
 
+    BackgroundService backgroundService;
+
     private BarcodeDetector detector;
     private Uri imageUri;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
@@ -47,6 +49,8 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode_picture);
+
+        backgroundService = new BackgroundService();
 
         initViews();
 
@@ -114,48 +118,16 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
                         Barcode code = barcodes.valueAt(index);
                         txtResultBody.setText(txtResultBody.getText() + "\n" + code.displayValue + "\n");
 
-                        int type = barcodes.valueAt(index).valueFormat;
-                        switch (type) {
-                            case Barcode.CONTACT_INFO:
-                                Log.i(TAG, code.contactInfo.title);
-                                break;
-                            case Barcode.EMAIL:
-                                Log.i(TAG, code.displayValue);
-                                break;
-                            case Barcode.ISBN:
-                                Log.i(TAG, code.rawValue);
-                                break;
-                            case Barcode.PHONE:
-                                Log.i(TAG, code.phone.number);
-                                break;
-                            case Barcode.PRODUCT:
-                                Log.i(TAG, code.rawValue);
-                                break;
-                            case Barcode.SMS:
-                                Log.i(TAG, code.sms.message);
-                                break;
-                            case Barcode.TEXT:
-                                Log.i(TAG, code.displayValue);
-                                break;
-                            case Barcode.URL:
-                                Log.i(TAG, "url: " + code.displayValue);
-                                break;
-                            case Barcode.WIFI:
-                                Log.i(TAG, code.wifi.ssid);
-                                break;
-                            case Barcode.GEO:
-                                Log.i(TAG, code.geoPoint.lat + ":" + code.geoPoint.lng);
-                                break;
-                            case Barcode.CALENDAR_EVENT:
-                                Log.i(TAG, code.calendarEvent.description);
-                                break;
-                            case Barcode.DRIVER_LICENSE:
-                                Log.i(TAG, code.driverLicense.licenseNumber);
-                                break;
-                            default:
-                                Log.i(TAG, code.rawValue);
-                                break;
+                        if(validIP(code.displayValue) == true){
+                            Log.v("ip", code.displayValue);
+
+                            backgroundService.setIP(code.displayValue);
+                        }else{
+                            Log.v("ip", "invalid");
                         }
+
+
+
                     }
                     if (barcodes.size() == 0) {
                         txtResultBody.setText("No barcode could be detected. Please try again.");
@@ -168,6 +140,33 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
                         .show();
                 Log.e(TAG, e.toString());
             }
+        }
+    }
+
+    public static boolean validIP (String ip) {
+        try {
+            if ( ip == null || ip.isEmpty() ) {
+                return false;
+            }
+
+            String[] parts = ip.split( "\\." );
+            if ( parts.length != 4 ) {
+                return false;
+            }
+
+            for ( String s : parts ) {
+                int i = Integer.parseInt( s );
+                if ( (i < 0) || (i > 255) ) {
+                    return false;
+                }
+            }
+            if ( ip.endsWith(".") ) {
+                return false;
+            }
+
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
         }
     }
 

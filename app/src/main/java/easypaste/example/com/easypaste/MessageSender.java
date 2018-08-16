@@ -1,18 +1,23 @@
 package easypaste.example.com.easypaste;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class MessageSender extends AsyncTask<String, Void, Void> {
+public class MessageSender extends AsyncTask<String, String, Void> {
 
     @Override
-    protected Void doInBackground(String... voids) {
+    protected Void doInBackground(String... strings) {
 
-        String message = voids[0];
+        String message = strings[0];
+        String ipaddress = strings[1];
+
+        Log.v("messenger", message);
+        Log.v("messenger", ipaddress);
 
         Socket s;
         DataOutputStream dos;
@@ -36,4 +41,6 @@ public class MessageSender extends AsyncTask<String, Void, Void> {
 
         return null;
     }
+
+
 }

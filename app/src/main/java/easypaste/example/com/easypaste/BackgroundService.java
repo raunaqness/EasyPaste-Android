@@ -22,6 +22,10 @@ public class BackgroundService extends IntentService{
     private ClipData myClip;
 
 
+    String ipaddress;
+    MessageSender messageSender;
+
+
     public BackgroundService(){
         super("Background Service");
     }
@@ -29,12 +33,15 @@ public class BackgroundService extends IntentService{
     @Override
     public void onCreate(){
         super.onCreate();
+
+        messageSender = new MessageSender();
+        ipaddress = new String("0.0.0.0");
+
         Log.v("BG", "BG service has started");
         createNotificationChannel();
         myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
-
-         ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener =
+        ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener =
                 new ClipboardManager.OnPrimaryClipChangedListener() {
                     @Override
                     public void onPrimaryClipChanged() {
@@ -44,10 +51,16 @@ public class BackgroundService extends IntentService{
 
                         String clipText = item.getText().toString();
                         Log.v("BG", clipText);
+
+                        // Send to Socket
+
+                        messageSender.execute(clipText, ipaddress);
+                        Log.v("BG", clipText + " sent to : " + ipaddress);
+
                     }
                 };
 
-         myClipboard.addPrimaryClipChangedListener(mOnPrimaryClipChangedListener);
+        myClipboard.addPrimaryClipChangedListener(mOnPrimaryClipChangedListener);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "hello1234")
                 .setSmallIcon(R.drawable.ic_action_name)
@@ -58,9 +71,13 @@ public class BackgroundService extends IntentService{
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-// notificationId is a unique int for each notification that you must define
         notificationManager.notify(12345, mBuilder.build());
 
+    }
+
+
+    public void setIP(String ip){
+        ipaddress = ip;
 
     }
 

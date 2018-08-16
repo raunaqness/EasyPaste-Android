@@ -12,6 +12,7 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     EditText e1;
+    Button sendButton;
 
     Button btnTakePicture, btnScanBarcode;
 
@@ -23,17 +24,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, BackgroundService.class);
         startService(intent);
 
-        e1 = findViewById(R.id.editText);
-
         initViews();
 
     }
 
     private void initViews() {
+        e1 = findViewById(R.id.editText);
+        sendButton = findViewById(R.id.sendButton);
+
         btnTakePicture = findViewById(R.id.btnTakePicture);
         btnScanBarcode = findViewById(R.id.btnScanBarcode);
         btnTakePicture.setOnClickListener(this);
         btnScanBarcode.setOnClickListener(this);
+
+        // Hide Temporarily
+
+        e1.setVisibility(View.INVISIBLE);
+        sendButton.setVisibility(View.INVISIBLE);
+        btnScanBarcode.setVisibility(View.INVISIBLE);
     }
 
     @Override
