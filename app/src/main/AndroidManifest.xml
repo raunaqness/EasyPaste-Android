@@ -31,8 +31,7 @@
 
         <activity android:name=".PictureBarcodeActivity"/>
         <activity android:name=".ScannedBarcodeActivity"/>
-        <service android:name=".BackgroundService"
-            android:exported="false"></service>
+        <service android:name=".BackgroundService"/>
 
 
         <meta-data

@@ -2,8 +2,10 @@
 package easypaste.example.com.easypaste;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -45,10 +47,15 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
     private static final String SAVED_INSTANCE_URI = "uri";
     private static final String SAVED_INSTANCE_RESULT = "result";
 
+    SharedPreferences sharedpreferences;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode_picture);
+
+        sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
 
         backgroundService = new BackgroundService();
 
@@ -103,6 +110,12 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
         }
     }
 
+//    void enableReciever(Context context){
+//        ComponentName componentName = new ComponentName(context, BackgroundService.class);
+//        PackageManager packageManager = context.getPackageManager();
+//        packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+//    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
@@ -118,10 +131,18 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
                         Barcode code = barcodes.valueAt(index);
                         txtResultBody.setText(txtResultBody.getText() + "\n" + code.displayValue + "\n");
 
-                        if(validIP(code.displayValue) == true){
+                        if(validIP(code.displayValue)){
                             Log.v("ip", code.displayValue);
 
-                            backgroundService.setIP(code.displayValue);
+                            SharedPreferences.Editor editor = sharedpreferences.edit();
+                            editor.putString("ip_address", code.displayValue);
+                            editor.apply();
+//                            enableReciever(getApplicationContext());
+                            // Service
+                            startService(new Intent(this, BackgroundService.class));
+
+                            Log.e("BARDANCE", "Service ke niche hai fraaaand.");
+
                         }else{
                             Log.v("ip", "invalid");
                         }

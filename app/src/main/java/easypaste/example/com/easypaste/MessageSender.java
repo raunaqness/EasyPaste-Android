@@ -8,23 +8,23 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class MessageSender extends AsyncTask<String, String, Void> {
+public class MessageSender extends AsyncTask<String, Void, Void> {
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected Void doInBackground(String... voids) {
 
-        String message = strings[0];
-        String ipaddress = strings[1];
+        String message = voids[0];
+        String ip = voids[1];
 
-        Log.v("messenger", message);
-        Log.v("messenger", ipaddress);
+        Log.v("messenger-1", message);
+//        Log.v("messenger", ipaddress);
 
         Socket s;
         DataOutputStream dos;
         PrintWriter pw;
 
         try{
-            s = new Socket("192.168.0.102", 7800);
+            s = new Socket(ip, 1234);
             pw = new PrintWriter(s.getOutputStream());
             pw.write(message);
             pw.flush();

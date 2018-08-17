@@ -4,10 +4,14 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -24,6 +28,11 @@ public class BackgroundService extends IntentService{
 
     String ipaddress;
     MessageSender messageSender;
+    int startID;
+
+    ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener;
+
+    SharedPreferences sharedPreferences;
 
 
     public BackgroundService(){
@@ -31,18 +40,25 @@ public class BackgroundService extends IntentService{
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startID){
+        this.startID = startID;
+        return START_NOT_STICKY;
+    }
+
+    @Override
     public void onCreate(){
         super.onCreate();
 
-        messageSender = new MessageSender();
-        ipaddress = new String("0.0.0.0");
+        sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+
+        ipaddress = sharedPreferences.getString("ip_address", "0.0.0.0");
+        Log.e("IP", ipaddress);
 
         Log.v("BG", "BG service has started");
         createNotificationChannel();
         myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
-        ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener =
-                new ClipboardManager.OnPrimaryClipChangedListener() {
+         mOnPrimaryClipChangedListener = new ClipboardManager.OnPrimaryClipChangedListener() {
                     @Override
                     public void onPrimaryClipChanged() {
                         Log.v("BG", "onPrimaryClipChanged");
@@ -53,8 +69,10 @@ public class BackgroundService extends IntentService{
                         Log.v("BG", clipText);
 
                         // Send to Socket
+                        String hello[] = {clipText, ipaddress};
 
-                        messageSender.execute(clipText, ipaddress);
+                        messageSender = new MessageSender();
+                        messageSender.execute(hello);
                         Log.v("BG", clipText + " sent to : " + ipaddress);
 
                     }
@@ -62,11 +80,14 @@ public class BackgroundService extends IntentService{
 
         myClipboard.addPrimaryClipChangedListener(mOnPrimaryClipChangedListener);
 
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(getApplicationContext(), MainActivity.class), 0);
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "hello1234")
                 .setSmallIcon(R.drawable.ic_action_name)
                 .setContentTitle("Hello Fraaand")
                 .setContentText("Run hori hai service bois")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
                 .setOngoing(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -82,19 +103,40 @@ public class BackgroundService extends IntentService{
     }
 
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.app_name);
             String description = getString(R.string.app_name);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel("hello1234", name, importance);
             channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
+
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.v("onDestroy()", "Andar aagye fraaaaaand");
+
+        if(messageSender!=null) {
+            messageSender.cancel(true);
+        }
+
+        if(myClipboard != null){
+            myClipboard.removePrimaryClipChangedListener(mOnPrimaryClipChangedListener);
+        }
+
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        try{
+            notificationManager.cancel(12345);
+        } catch (Exception e ){
+            Log.v("onDestroy() - Service", e.getLocalizedMessage());
+        }
+
+        stopSelf(startID);
     }
 
 
