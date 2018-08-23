@@ -7,24 +7,27 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <EditText
-        android:id="@+id/editText"
+
+    <TextView
+        android:id="@+id/currentTime"
         android:layout_width="352dp"
-        android:layout_height="wrap_content"
+        android:layout_height="33dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"/>
+        android:textSize="22dp"
+        android:textAlignment="center" />
 
     <Button
-        android:id="@+id/sendButton"
+        android:id="@+id/currentTimeButton"
         android:layout_width="352dp"
         android:layout_height="wrap_content"
-        android:text="Send"
+        android:text="Current Time"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/editText"
+        android:layout_below="@id/currentTime"
         android:layout_marginTop="10dp"
          />
 
@@ -33,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Connect"
-        android:layout_below="@id/sendButton"
+        android:layout_below="@id/currentTimeButton"
         android:layout_centerHorizontal="true"/>
 
     <Button

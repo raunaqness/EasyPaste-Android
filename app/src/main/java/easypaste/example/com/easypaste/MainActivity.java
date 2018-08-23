@@ -6,20 +6,35 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    EditText e1;
-    Button sendButton;
     Button exitButton;
+    Button currentTimeButton;
+    TextView currentTime;
 
     Button btnTakePicture, btnScanBarcode;
+
+    RequestQueue queue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,33 +44,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, BackgroundService.class);
         startService(intent);
 
+        queue = Volley.newRequestQueue(this);
+
         initViews();
 
     }
 
-    private void initViews() {
-        e1 = findViewById(R.id.editText);
-        sendButton = findViewById(R.id.sendButton);
-        exitButton = findViewById(R.id.exitButton);
+    public void volleyGetRequest(){
+        String url = "http://192.168.0.101:1234/";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("gg", response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error", error.toString());
+            }
+        });
+        queue.add(stringRequest);
+    }
 
+    public void volleyPostRequest
+
+    private void initViews() {
+        currentTime = findViewById(R.id.currentTime);
+        exitButton = findViewById(R.id.exitButton);
         btnTakePicture = findViewById(R.id.btnTakePicture);
         btnScanBarcode = findViewById(R.id.btnScanBarcode);
+        currentTimeButton = findViewById(R.id.currentTimeButton);
+
+        currentTimeButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
         btnTakePicture.setOnClickListener(this);
         btnScanBarcode.setOnClickListener(this);
 
         // Hide Temporarily
 
-        e1.setVisibility(View.INVISIBLE);
-        sendButton.setVisibility(View.INVISIBLE);
         btnScanBarcode.setVisibility(View.INVISIBLE);
     }
 
-//    void disableReciever(Context context){
-//        ComponentName componentName = new ComponentName(context, BackgroundService.class);
-//        PackageManager packageManager = context.getPackageManager();
-//        packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-//    }
+    public void setCurrentTime() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss");
+        String strDate = mdformat.format(calendar.getTime());
+        currentTime.setText(strDate);
+
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -74,10 +111,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                disableReciever(getApplicationContext());
                 break;
 
-            case R.id.sendButton:
-                MessageSender messageSender = new MessageSender();
-                messageSender.execute(e1.getText().toString());
+            case R.id.currentTimeButton:
+//                setCurrentTime();
+                volleyGetRequest();
                 break;
+
+
         }
 
     }

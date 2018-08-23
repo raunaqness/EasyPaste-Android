@@ -34,7 +34,6 @@ public class BackgroundService extends IntentService{
 
     SharedPreferences sharedPreferences;
 
-
     public BackgroundService(){
         super("Background Service");
     }
@@ -119,7 +118,7 @@ public class BackgroundService extends IntentService{
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.v("onDestroy()", "Andar aagye fraaaaaand");
+        Log.v("onDestroy()", "Destroy hogya fraaand");
 
         if(messageSender!=null) {
             messageSender.cancel(true);
