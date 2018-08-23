@@ -23,7 +23,6 @@ import java.util.concurrent.Executors;
 public class BackgroundService extends IntentService{
 
     private ClipboardManager myClipboard;
-    private ClipData myClip;
 
     String ipaddress;
     MainActivity mainActivity;
@@ -67,15 +66,8 @@ public class BackgroundService extends IntentService{
                         String clipText = item.getText().toString();
                         Log.v("BG", clipText);
 
-                        // Send to Desktop
-                        try{
-                            mainActivity.volleyPostRequest(clipText, "ip");
+                            Utils.volleyPostRequest(clipText, "ip");
                             Log.v("BG", clipText + " sent to : " + ipaddress);
-                        }catch (Exception e){
-                            Log.d("BG", e.toString());
-                        }
-
-
                     }
                 };
 
@@ -97,12 +89,6 @@ public class BackgroundService extends IntentService{
 
     }
 
-
-    public void setIP(String ip){
-        ipaddress = ip;
-
-    }
-
     private void createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -121,10 +107,6 @@ public class BackgroundService extends IntentService{
     public void onDestroy(){
         super.onDestroy();
         Log.v("onDestroy()", "Destroy hogya fraaand");
-//
-//        if(messageSender!=null) {
-//            messageSender.cancel(true);
-//        }
 
         if(myClipboard != null){
             myClipboard.removePrimaryClipChangedListener(mOnPrimaryClipChangedListener);
