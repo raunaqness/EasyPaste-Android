@@ -25,9 +25,8 @@ public class BackgroundService extends IntentService{
     private ClipboardManager myClipboard;
     private ClipData myClip;
 
-
     String ipaddress;
-    MessageSender messageSender;
+    MainActivity mainActivity;
     int startID;
 
     ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener;
@@ -48,6 +47,7 @@ public class BackgroundService extends IntentService{
     public void onCreate(){
         super.onCreate();
 
+        mainActivity = new MainActivity();
         sharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
 
         ipaddress = sharedPreferences.getString("ip_address", "0.0.0.0");
@@ -67,12 +67,14 @@ public class BackgroundService extends IntentService{
                         String clipText = item.getText().toString();
                         Log.v("BG", clipText);
 
-                        // Send to Socket
-                        String hello[] = {clipText, ipaddress};
+                        // Send to Desktop
+                        try{
+                            mainActivity.volleyPostRequest(clipText, "ip");
+                            Log.v("BG", clipText + " sent to : " + ipaddress);
+                        }catch (Exception e){
+                            Log.d("BG", e.toString());
+                        }
 
-                        messageSender = new MessageSender();
-                        messageSender.execute(hello);
-                        Log.v("BG", clipText + " sent to : " + ipaddress);
 
                     }
                 };
@@ -119,10 +121,10 @@ public class BackgroundService extends IntentService{
     public void onDestroy(){
         super.onDestroy();
         Log.v("onDestroy()", "Destroy hogya fraaand");
-
-        if(messageSender!=null) {
-            messageSender.cancel(true);
-        }
+//
+//        if(messageSender!=null) {
+//            messageSender.cancel(true);
+//        }
 
         if(myClipboard != null){
             myClipboard.removePrimaryClipChangedListener(mOnPrimaryClipChangedListener);
