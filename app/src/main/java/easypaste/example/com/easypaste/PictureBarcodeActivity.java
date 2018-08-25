@@ -131,20 +131,27 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
                         Barcode code = barcodes.valueAt(index);
                         txtResultBody.setText(txtResultBody.getText() + "\n" + code.displayValue + "\n");
 
-                        if(validIP(code.displayValue)){
-                            Log.v("ip", code.displayValue);
+                        String word = code.displayValue;
+                        String[] words;
+                        words = word.split(" | ");
+
+                        String ip = words[0];
+
+                        if(validIP(ip)){
+                            Log.e("ip", "IP Valid");
+                            Log.e("ip", ip);
 
                             SharedPreferences.Editor editor = sharedpreferences.edit();
-                            editor.putString("ip_address", code.displayValue);
+                            editor.putString("ip_address", ip);
                             editor.apply();
-//                            enableReciever(getApplicationContext());
+
                             // Service
                             startService(new Intent(this, BackgroundService.class));
 
                             Log.e("BARDANCE", "Service ke niche hai fraaaand.");
 
                         }else{
-                            Log.v("ip", "invalid");
+                            Log.e("ip", "invalid");
                         }
 
 

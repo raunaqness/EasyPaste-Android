@@ -66,7 +66,7 @@ public class BackgroundService extends IntentService{
                         String clipText = item.getText().toString();
                         Log.v("BG", clipText);
 
-                            Utils.volleyPostRequest(clipText, "ip");
+                            Utils.volleyPostRequest(clipText, ipaddress);
                             Log.v("BG", clipText + " sent to : " + ipaddress);
                     }
                 };

@@ -1,6 +1,8 @@
 package easypaste.example.com.easypaste;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -18,7 +20,7 @@ import java.util.Map;
 public class Utils {
 
     static RequestQueue queue = Volley.newRequestQueue(MainActivity.getContext());
-    static String url = "http://192.168.0.101:1234/";
+//    static String url = "http://192.168.0.101:1234/";
 
     public static String getTimestamp(){
         Calendar calendar = Calendar.getInstance();
@@ -28,7 +30,7 @@ public class Utils {
     }
 
     public static void volleyGetRequest(){
-
+        String url = "";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -45,8 +47,9 @@ public class Utils {
 
     public static void volleyPostRequest(final String message, String ipaddress){
 
-        String postURL = url + "android";
-        Log.d("MESSAGE", message);
+        String port = "1234";
+        String postURL = "http://" + ipaddress + ":" + port + "/from_android";
+        Log.d("Utils", postURL);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
