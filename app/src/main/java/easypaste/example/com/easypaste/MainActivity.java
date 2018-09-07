@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiManager;
 import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -38,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnTakePicture, btnScanBarcode;
 
     static Context context;
+
+    private Button connect;
+    private TextView connectText;
+    private boolean isConected = false;
+    Server server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +65,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initViews() {
+
+        connect = findViewById(R.id.CONNECT);
+        connectText = findViewById(R.id.text_connect);
+
+        try {
+            server = Server.getServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Server Stuff
+
+
         currentTime = findViewById(R.id.currentTime);
         exitButton = findViewById(R.id.exitButton);
         btnTakePicture = findViewById(R.id.btnTakePicture);
-        btnScanBarcode = findViewById(R.id.btnScanBarcode);
+//        btnScanBarcode = findViewById(R.id.btnScanBarcode);
         currentTimeButton = findViewById(R.id.currentTimeButton);
 
         currentTimeButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
         btnTakePicture.setOnClickListener(this);
-        btnScanBarcode.setOnClickListener(this);
+        connect.setOnClickListener(this);
+//        btnScanBarcode.setOnClickListener(this);
 
         // Hide Temporarily
 
-        btnScanBarcode.setVisibility(View.INVISIBLE);
+//        btnScanBarcode.setVisibility(View.INVISIBLE);
     }
+
+    public void HttpButtonClick(){
+        if (isConected) {
+            server.stop();
+            connectText.setText("Disconnected");
+        } else {
+            try {
+                server.start();
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+                int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+                final String formatedIpAddress = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
+                        (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+
+                connectText.setText("Connected : " + "Please access! http://" + formatedIpAddress + ":" + server.getListeningPort() +" From a web browser");
+
+
+            } catch (IOException e) {
+
+                connectText.setText("Connection failed");
+
+
+            }
+
+        }
+        isConected = !isConected;
+    }
+
 
     public void setCurrentTime() {
         Calendar calendar = Calendar.getInstance();
@@ -97,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnTakePicture:
                 startActivity(new Intent(MainActivity.this, PictureBarcodeActivity.class));
                 break;
-            case R.id.btnScanBarcode:
-                startActivity(new Intent(MainActivity.this, ScannedBarcodeActivity.class));
-                break;
+//            case R.id.btnScanBarcode:
+//                startActivity(new Intent(MainActivity.this, ScannedBarcodeActivity.class));
+//                break;
 
             case R.id.exitButton:
                 Log.v("Button", "service stopped");
@@ -114,7 +163,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 starthttp();
                 break;
 
+            case R.id.CONNECT:
+                HttpButtonClick();
+                break;
+
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Make sure  to close connection when destroying the activity
+        server.stop();
     }
 }
