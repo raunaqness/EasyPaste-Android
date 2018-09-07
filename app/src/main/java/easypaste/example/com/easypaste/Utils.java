@@ -1,8 +1,5 @@
 package easypaste.example.com.easypaste;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -20,7 +17,8 @@ import java.util.Map;
 public class Utils {
 
     static RequestQueue queue = Volley.newRequestQueue(MainActivity.getContext());
-//    static String url = "http://192.168.0.101:1234/";
+
+
 
     public static String getTimestamp(){
         Calendar calendar = Calendar.getInstance();

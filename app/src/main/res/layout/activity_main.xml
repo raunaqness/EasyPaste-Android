@@ -8,6 +8,8 @@
     tools:layout_editor_absoluteY="81dp">
 
 
+
+
     <TextView
         android:id="@+id/currentTime"
         android:layout_width="352dp"
@@ -25,7 +27,7 @@
         android:id="@+id/currentTimeButton"
         android:layout_width="352dp"
         android:layout_height="wrap_content"
-        android:text="Current Time"
+        android:text="Start HTTP"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/currentTime"
         android:layout_marginTop="10dp"

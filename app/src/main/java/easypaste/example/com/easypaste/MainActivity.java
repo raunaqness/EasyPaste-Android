@@ -27,6 +27,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button exitButton;
@@ -80,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void starthttp(){
+        Intent httpserver = new Intent(this, HttpServer.class);
+        startActivity(httpserver);
+
+
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -102,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                setCurrentTime();
 //                volleyGetRequest();
 //                volleyPostRequest("Message", "http://192.168.0.101/android");
+                starthttp();
                 break;
 
         }
