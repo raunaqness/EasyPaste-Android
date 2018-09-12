@@ -66,7 +66,7 @@ public class BackgroundService extends IntentService{
                         String clipText = item.getText().toString();
                         Log.v("BG", clipText);
 
-                            Utils.volleyPostRequest(clipText, ipaddress);
+                            Utils.volleyPostRequest(clipText, ipaddress, "data_from_android");
                             Log.v("BG", clipText + " sent to : " + ipaddress);
                     }
                 };
@@ -77,8 +77,8 @@ public class BackgroundService extends IntentService{
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "hello1234")
                 .setSmallIcon(R.drawable.ic_action_name)
-                .setContentTitle("Hello Fraaand")
-                .setContentText("Run hori hai service bois")
+                .setContentTitle("EasyPaste is running in the Background")
+                .setContentText("Tap to view more options")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true);

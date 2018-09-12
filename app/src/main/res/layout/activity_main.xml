@@ -27,7 +27,7 @@
         android:id="@+id/currentTimeButton"
         android:layout_width="352dp"
         android:layout_height="wrap_content"
-        android:text="Start HTTP"
+        android:text="current Time Button"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/currentTime"
         android:layout_marginTop="10dp"
@@ -37,7 +37,7 @@
         android:id="@+id/btnTakePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect"
+        android:text="Connect to Mac"
         android:layout_below="@id/currentTimeButton"
         android:layout_centerHorizontal="true"/>
 
@@ -45,7 +45,7 @@
         android:id="@+id/CONNECT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HTTP Connect"
+        android:text="Start HTTP Server"
         android:layout_below="@id/btnTakePicture"
         android:layout_centerHorizontal="true"/>
 

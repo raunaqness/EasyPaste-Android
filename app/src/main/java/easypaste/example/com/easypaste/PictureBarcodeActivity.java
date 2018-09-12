@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,6 +31,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 public class PictureBarcodeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -39,6 +41,10 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
 
     BackgroundService backgroundService;
 
+    // Variables for HTTP Server
+    private boolean isConected = false;
+    Server server;
+
     private BarcodeDetector detector;
     private Uri imageUri;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
@@ -47,7 +53,12 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
     private static final String SAVED_INSTANCE_URI = "uri";
     private static final String SAVED_INSTANCE_RESULT = "result";
 
+    Context context;
+    Toast toast;
+
     SharedPreferences sharedpreferences;
+    String Mac_IP;
+    String Android_IP;
 
 
     @Override
@@ -56,6 +67,8 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_barcode_picture);
 
         sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
+
+        context = getApplicationContext();
 
         backgroundService = new BackgroundService();
 
@@ -110,6 +123,36 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
         }
     }
 
+    public void startHTTPServer(){
+
+        try {
+            server = Server.getServer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            server.start();
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+
+            int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+            final String formatedIpAddress = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
+                    (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+
+            Android_IP = formatedIpAddress;
+
+            // Send Acknowledgement and local HTTP Server IP Address
+            Utils.volleyPostRequest(Android_IP , Mac_IP, "ack_from_android");
+            Log.e("ACK", "Connection_Established_IP_" + Android_IP);
+
+            isConected = true;
+
+        } catch (IOException e) {
+            Log.e("PictureActivity", "Connection failed");
+
+        }
+    }
+
 //    void enableReciever(Context context){
 //        ComponentName componentName = new ComponentName(context, BackgroundService.class);
 //        PackageManager packageManager = context.getPackageManager();
@@ -121,8 +164,6 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             launchMediaScanIntent();
             try {
-
-
                 Bitmap bitmap = decodeBitmapUri(this, imageUri);
                 if (detector.isOperational() && bitmap != null) {
                     Frame frame = new Frame.Builder().setBitmap(bitmap).build();
@@ -138,8 +179,12 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
                         String ip = words[0];
 
                         if(validIP(ip)){
-                            Log.e("ip", "IP Valid");
                             Log.e("ip", ip);
+
+                            Mac_IP = ip.toString();
+
+                            toast = Toast.makeText(context, "Connected!", Toast.LENGTH_SHORT);
+                            toast.show();
 
                             SharedPreferences.Editor editor = sharedpreferences.edit();
                             editor.putString("ip_address", ip);
@@ -148,20 +193,31 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
                             // Service
                             startService(new Intent(this, BackgroundService.class));
 
-                            Log.e("BARDANCE", "Service ke niche hai fraaaand.");
+                            // Start HTTP Server
+                            startHTTPServer();
+
+                            // Go Back to Main Activity
+                            Intent i = new Intent(this, MainActivity.class);
+                            startActivity(i);
+
 
                         }else{
-                            Log.e("ip", "invalid");
+                            toast = Toast.makeText(context, "Invalid IP Address", Toast.LENGTH_SHORT);
+                            toast.show();
+                            Log.e("ip", "Invalid IP Address found");
                         }
-
-
 
                     }
                     if (barcodes.size() == 0) {
-                        txtResultBody.setText("No barcode could be detected. Please try again.");
+                        toast = Toast.makeText(context, "Please try again.", Toast.LENGTH_SHORT);
+                        toast.show();
+//                        txtResultBody.setText("No barcode could be detected. Please try again.");
                     }
                 } else {
-                    txtResultBody.setText("Detector initialisation failed");
+                    toast = Toast.makeText(context, "Detector initialisation failed", Toast.LENGTH_SHORT);
+                    toast.show();
+
+//                    txtResultBody.setText("Detector initialisation failed");
                 }
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "Failed to load Image", Toast.LENGTH_SHORT)

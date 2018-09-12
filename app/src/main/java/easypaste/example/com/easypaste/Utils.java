@@ -43,10 +43,10 @@ public class Utils {
         queue.add(stringRequest);
     }
 
-    public static void volleyPostRequest(final String message, String ipaddress){
+    public static void volleyPostRequest(final String message, String ipaddress, String dataType){
 
         String port = "1234";
-        String postURL = "http://" + ipaddress + ":" + port + "/from_android";
+        String postURL = "http://" + ipaddress + ":" + port + "/" + dataType;
         Log.d("Utils", postURL);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override

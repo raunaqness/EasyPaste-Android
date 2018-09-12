@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -41,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     static Context context;
 
+    Toast toast;
+
+
     private Button connect;
     private TextView connectText;
     private boolean isConected = false;
@@ -57,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initViews();
 
         context = getApplicationContext();
+
+        toast = Toast.makeText(context, "Background service has stopped.", Toast.LENGTH_LONG);
 
     }
 
@@ -115,7 +121,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 connectText.setText("Connection failed");
 
-
             }
 
         }
@@ -146,13 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnTakePicture:
                 startActivity(new Intent(MainActivity.this, PictureBarcodeActivity.class));
                 break;
-//            case R.id.btnScanBarcode:
-//                startActivity(new Intent(MainActivity.this, ScannedBarcodeActivity.class));
-//                break;
 
             case R.id.exitButton:
                 Log.v("Button", "service stopped");
                 stopService( new Intent(this, BackgroundService.class));
+                toast.show();
 //                disableReciever(getApplicationContext());
                 break;
 
@@ -175,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         // Make sure  to close connection when destroying the activity
+        toast.show();
         server.stop();
     }
 }
