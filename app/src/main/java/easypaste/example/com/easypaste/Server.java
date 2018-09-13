@@ -45,19 +45,31 @@ public class Server extends NanoHTTPD {
             Log.e("payload_type", payload_type);
             Log.e("payload_data", payload_data);
 
-            Utils.CopyToClipboard(payload_data);
+            HandlePayload(payload_type, payload_data);
 
-
+            // Utils.CopyToClipboard(payload_data);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-
-
-
         return newFixedLengthResponse(json);
+    }
+
+    void HandlePayload(String payload_type, String payload_data){
+        switch (payload_type){
+            case "Acknowledgement" :
+                break;
+
+            case "ClipText":
+                break;
+
+            case "Image":
+                break;
+
+            default:
+                break;
+        }
     }
 
 
