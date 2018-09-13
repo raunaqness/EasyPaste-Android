@@ -1,5 +1,10 @@
 package easypaste.example.com.easypaste;
 
+import android.app.Application;
+import android.app.IntentService;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -14,10 +19,23 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Utils {
+import static android.content.Context.CLIPBOARD_SERVICE;
+
+public class Utils  {
 
     static RequestQueue queue = Volley.newRequestQueue(MainActivity.getContext());
 
+    public static void CopyToClipboard(String ClipText){
+
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("simple text", ClipText);
+        clipboard.setPrimaryClip(clip);
+
+    }
+
+    private static Object gg(String clipboardService) {
+        return(MainActivity.getContext());
+    }
 
 
     public static String getTimestamp(){
@@ -43,10 +61,10 @@ public class Utils {
         queue.add(stringRequest);
     }
 
-    public static void volleyPostRequest(final String message, String ipaddress, String dataType){
+    public static void volleyPostRequest(final String message, String ipaddress, final String payload_type){
 
         String port = "1234";
-        String postURL = "http://" + ipaddress + ":" + port + "/" + dataType;
+        String postURL = "http://" + ipaddress + ":" + port + "/payload_from_android";
         Log.d("Utils", postURL);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
@@ -62,7 +80,8 @@ public class Utils {
         }) {
             protected Map<String, String> getParams(){
                 Map<String, String> myData = new HashMap<String, String>();
-                myData.put("message", message);
+                myData.put("payload_type", payload_type);
+                myData.put("data", message);
                 myData.put("timestamp", getTimestamp());
                 Log.d("VolleyPost_Message", message);
 
@@ -71,5 +90,9 @@ public class Utils {
         };
 
         queue.add(stringRequest);
+    }
+
+    public static Context getActivity() {
+        return MainActivity.getContext();
     }
 }

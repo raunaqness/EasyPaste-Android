@@ -142,7 +142,7 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
             Android_IP = formatedIpAddress;
 
             // Send Acknowledgement and local HTTP Server IP Address
-            Utils.volleyPostRequest(Android_IP , Mac_IP, "ack_from_android");
+            Utils.volleyPostRequest(Android_IP , Mac_IP, "Acknowledgement");
             Log.e("ACK", "Connection_Established_IP_" + Android_IP);
 
             isConected = true;

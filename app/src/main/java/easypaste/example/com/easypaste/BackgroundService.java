@@ -66,7 +66,8 @@ public class BackgroundService extends IntentService{
                         String clipText = item.getText().toString();
                         Log.v("BG", clipText);
 
-                            Utils.volleyPostRequest(clipText, ipaddress, "data_from_android");
+                            Utils.volleyPostRequest(clipText, ipaddress, "ClipText");
+
                             Log.v("BG", clipText + " sent to : " + ipaddress);
                     }
                 };
@@ -88,6 +89,15 @@ public class BackgroundService extends IntentService{
         notificationManager.notify(12345, mBuilder.build());
 
     }
+
+    public void CopyToClipboard(String clipText){
+        hue(clipText);
+    }
+
+   public void hue(String clipText){
+       ClipData clip = ClipData.newPlainText("simple text", clipText);
+       myClipboard.setPrimaryClip(clip);
+   }
 
     private void createNotificationChannel() {
 
