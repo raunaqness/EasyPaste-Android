@@ -126,7 +126,7 @@ public class PictureBarcodeActivity extends AppCompatActivity implements View.On
     public void startHTTPServer(){
 
         try {
-            server = Server.getServer();
+            server = new Server(getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

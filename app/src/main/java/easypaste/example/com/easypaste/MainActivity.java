@@ -38,14 +38,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button currentTimeButton;
     TextView currentTime;
 
-    Button btnTakePicture, btnScanBarcode;
+    Button btnTakePicture, btnGallery;
 
     static Context context;
 
     Toast toast;
 
-
-    private Button connect;
+//    private Button connect;
     private TextView connectText;
     private boolean isConected = false;
     Server server;
@@ -72,14 +71,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initViews() {
 
-        connect = findViewById(R.id.CONNECT);
+//        connect = findViewById(R.id.CONNECT);
         connectText = findViewById(R.id.text_connect);
 
-        try {
-            server = Server.getServer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            server = Server.getServer();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         // Server Stuff
 
@@ -87,14 +86,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         currentTime = findViewById(R.id.currentTime);
         exitButton = findViewById(R.id.exitButton);
         btnTakePicture = findViewById(R.id.btnTakePicture);
-//        btnScanBarcode = findViewById(R.id.btnScanBarcode);
+        btnGallery = findViewById(R.id.Gallery);
         currentTimeButton = findViewById(R.id.currentTimeButton);
 
         currentTimeButton.setOnClickListener(this);
         exitButton.setOnClickListener(this);
         btnTakePicture.setOnClickListener(this);
-        connect.setOnClickListener(this);
-//        btnScanBarcode.setOnClickListener(this);
+//        connect.setOnClickListener(this);
+        btnGallery.setOnClickListener(this);
 
         // Hide Temporarily
 
@@ -143,6 +142,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    public void imageFromGallery(){
+
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -159,6 +162,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                disableReciever(getApplicationContext());
                 break;
 
+            case R.id.Gallery:
+                startActivity(new Intent(MainActivity.this, ImagePostActivity.class));
+                break;
+
             case R.id.currentTimeButton:
 //                setCurrentTime();
 //                volleyGetRequest();
@@ -166,9 +173,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 starthttp();
                 break;
 
-            case R.id.CONNECT:
-                HttpButtonClick();
-                break;
+//            case R.id.CONNECT:
+//                HttpButtonClick();
+//                break;
 
         }
 

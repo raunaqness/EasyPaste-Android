@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/layoutProfile"
+    android:background="#ffffff"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/user_profile_photo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="-60dp"
+        android:elevation="5dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_camera" />
+
+    <Button android:id="@+id/btnSubmit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="15dp"
+        android:text="Save"
+        android:textColor="#fff"
+        android:drawablePadding="10dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:background="@color/colorPrimary"
+        android:textSize="20sp"
+        android:clickable="true"
+        android:elevation="4dp"
+        android:padding="20dp" />
+
+</RelativeLayout>

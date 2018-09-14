@@ -25,11 +25,21 @@ public class Utils  {
 
     static RequestQueue queue = Volley.newRequestQueue(MainActivity.getContext());
 
-    public static void CopyToClipboard(String ClipText){
+    ClipboardManager clipboard;
+    Context context;
+    MainActivity mainActivity;
 
-        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("simple text", ClipText);
-        clipboard.setPrimaryClip(clip);
+
+
+    public static void CopyToClipboard(String clipText, Context c){
+
+//            mainActivity = new MainActivity();
+//            context = mainActivity.getApplicationContext();
+//            clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+//            ClipData clip = ClipData.newPlainText("simple text", clipText);
+//            clipboard.setPrimaryClip(clip);
+
+
 
     }
 
@@ -66,6 +76,7 @@ public class Utils  {
         String port = "1234";
         String postURL = "http://" + ipaddress + ":" + port + "/payload_from_android";
         Log.d("Utils", postURL);
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, postURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -81,8 +92,9 @@ public class Utils  {
             protected Map<String, String> getParams(){
                 Map<String, String> myData = new HashMap<String, String>();
                 myData.put("payload_type", payload_type);
-                myData.put("data", message);
+                myData.put("payload_data", message);
                 myData.put("timestamp", getTimestamp());
+
                 Log.d("VolleyPost_Message", message);
 
                 return myData;

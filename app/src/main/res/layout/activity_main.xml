@@ -42,16 +42,16 @@
         android:layout_centerHorizontal="true"/>
 
     <Button
-        android:id="@+id/CONNECT"
+        android:id="@+id/Gallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start HTTP Server"
+        android:text="Gallery"
         android:layout_below="@id/btnTakePicture"
         android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/text_connect"
-        android:layout_below="@+id/CONNECT"
+        android:layout_below="@+id/Gallery"
         android:layout_width="352dp"
         android:layout_height="33dp"
         android:layout_centerHorizontal="true"
