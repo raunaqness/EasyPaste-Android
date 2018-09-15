@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static easypaste.example.com.easypaste.MainActivity.context;
+
 public class ImagePostActivity extends AppCompatActivity {
 
     ImageView user_profile_photo;
@@ -49,6 +52,9 @@ public class ImagePostActivity extends AppCompatActivity {
 
     SharedPreferences sharedpreferences;
 
+    Toast toast;
+    String image = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +63,7 @@ public class ImagePostActivity extends AppCompatActivity {
 
         sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
 
-        user_profile_photo = (ImageView) findViewById(R.id.user_profile_photo);
+        user_profile_photo = (ImageView) findViewById(R.id.image_preview);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
 
         // Progress dialog
@@ -72,23 +78,18 @@ public class ImagePostActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                
+                image = getStringImage(thumbnail);
 
-                String image = getStringImage(thumbnail);
+                if(image != null){
+                    String ip_address = sharedpreferences.getString("ip_address", "");
+                    Utils.volleyPostRequest(image, ip_address, "Image");
 
-                String ip_address = sharedpreferences.getString("ip_address", "");
+                }else{
+                    toast = Toast.makeText(context, "Please Select an Image", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
 
-                Utils.volleyPostRequest(image, ip_address, "Image");
-
-//                JSONObject imageObject = new JSONObject();
-//                try {
-//                    imageObject.put("size", "1000");
-//                    imageObject.put("type", "image/jpeg");
-//                    imageObject.put("data", image);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                updateProfile(String.valueOf(imageObject));
             }
         });
 
