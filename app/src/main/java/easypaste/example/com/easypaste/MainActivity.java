@@ -2,6 +2,8 @@ package easypaste.example.com.easypaste;
 
 
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button btnTakePicture, btnGallery;
 
     static Context context;
+    static ClipboardManager clipboard;
 
     Toast toast;
 
@@ -59,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initViews();
 
-        context = getApplicationContext();
+        context = this;
+        clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
 
         toast = Toast.makeText(context, "Background service has stopped.", Toast.LENGTH_LONG);
 
@@ -126,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isConected = !isConected;
     }
 
-
     public void setCurrentTime() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss");
@@ -142,8 +145,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void imageFromGallery(){
 
+
+    public static void HandlePayload(String payload_type, String payload_data){
+        switch (payload_type){
+            case "Acknowledgement" :
+                
+                break;
+
+            case "ClipText":
+                ClipData clip = ClipData.newPlainText("ClipText", payload_data);
+                clipboard.setPrimaryClip(clip);
+                break;
+
+            case "Image":
+                Intent intent = new Intent(context, ImagePostActivity.class);
+                context.startActivity(intent);
+                break;
+
+            default:
+                break;
+        }
     }
 
 

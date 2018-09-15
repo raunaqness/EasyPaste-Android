@@ -15,34 +15,23 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static easypaste.example.com.easypaste.MainActivity.context;
 
 public class ImagePostActivity extends AppCompatActivity {
 
-    ImageView user_profile_photo;
+    ImageView image_select_preview;
     String message, encodedImage;
     Button btnSubmit;
     private ProgressDialog pDialog;
@@ -63,8 +52,8 @@ public class ImagePostActivity extends AppCompatActivity {
 
         sharedpreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE);
 
-        user_profile_photo = (ImageView) findViewById(R.id.image_preview);
-        btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        image_select_preview = findViewById(R.id.image_preview);
+        btnSubmit = findViewById(R.id.btnSubmit);
 
         // Progress dialog
         pDialog = new ProgressDialog(this);
@@ -78,12 +67,19 @@ public class ImagePostActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
                 image = getStringImage(thumbnail);
 
                 if(image != null){
+
                     String ip_address = sharedpreferences.getString("ip_address", "");
+
                     Utils.volleyPostRequest(image, ip_address, "Image");
+
+                    Intent intent = new Intent(ImagePostActivity.this, MainActivity.class);
+                    startActivity(intent);
+
+                    // Show Toast - Success or Failure
 
                 }else{
                     toast = Toast.makeText(context, "Please Select an Image", Toast.LENGTH_SHORT);
@@ -93,72 +89,13 @@ public class ImagePostActivity extends AppCompatActivity {
             }
         });
 
-        user_profile_photo.setOnTouchListener(new View.OnTouchListener() {
+        image_select_preview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 selectImage();
                 return false;
             }
         });
-    }
-
-    private void updateProfile(final String image) {
-        // Tag used to cancel the request
-        String tag_string_req = "req_register";
-
-        pDialog.setMessage("Please wait ...");
-        showDialog();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.uploadImage, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                hideDialog();
-
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("status");
-                    message = jObj.getString("message");
-                    if (error) {
-
-                        Toast.makeText(ImagePostActivity.this, message, Toast.LENGTH_SHORT).show();
-
-
-                    } else {
-
-                        // Error occurred in registration. Get the error
-                        // message
-                        String errorMsg = jObj.getString("message");
-                        Toast.makeText(ImagePostActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ImagePostActivity.this, "Oops something went wrong...", Toast.LENGTH_LONG).show();
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String
-                    , String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("image", image);
-
-                return params;
-            }
-
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
     @Override
@@ -178,17 +115,17 @@ public class ImagePostActivity extends AppCompatActivity {
     }
 
     private void selectImage() {
-        final CharSequence[] items = {"Take Photo", "Choose from Library",
+        final CharSequence[] items = {"Take Photo from Camera", "Choose from Library",
                 "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Photo!");
+        builder.setTitle("Select Image");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 boolean result = Utility.checkPermission(ImagePostActivity.this);
 
-                if (items[item].equals("Take Photo")) {
+                if (items[item].equals("Take Photo from Camera")) {
                     userChoosenTask = "Take Photo";
                     if (result)
                         cameraIntent();
@@ -200,6 +137,8 @@ public class ImagePostActivity extends AppCompatActivity {
 
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
+                    Intent intent = new Intent(ImagePostActivity.this, MainActivity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -250,7 +189,7 @@ public class ImagePostActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        user_profile_photo.setImageBitmap(thumbnail);
+        image_select_preview.setImageBitmap(thumbnail);
     }
 
     @SuppressWarnings("deprecation")
@@ -263,7 +202,7 @@ public class ImagePostActivity extends AppCompatActivity {
             }
         }
 
-        user_profile_photo.setImageBitmap(thumbnail);
+        image_select_preview.setImageBitmap(thumbnail);
     }
 
     public String getStringImage(Bitmap bmp){
@@ -279,13 +218,4 @@ public class ImagePostActivity extends AppCompatActivity {
         return encodedImage;
     }
 
-    private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
-    }
 }

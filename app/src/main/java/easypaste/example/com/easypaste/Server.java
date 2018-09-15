@@ -3,6 +3,7 @@ package easypaste.example.com.easypaste;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -77,9 +78,12 @@ public class Server extends NanoHTTPD {
             Log.e("payload_type", payload_type);
             Log.e("payload_data", payload_data);
 
+
+
+            MainActivity.HandlePayload(payload_type, payload_data);
             // HandlePayload(payload_type, payload_data);
 
-            setClipboard(c, payload_data);
+//            setClipboard(c, payload_data);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,22 +92,7 @@ public class Server extends NanoHTTPD {
         return newFixedLengthResponse(json);
     }
 
-    void HandlePayload(String payload_type, String payload_data){
-        switch (payload_type){
-            case "Acknowledgement" :
 
-                break;
-
-            case "ClipText":
-                break;
-
-            case "Image":
-                break;
-
-            default:
-                break;
-        }
-    }
 
 
 //    public Server(Context c) throws IOException {
