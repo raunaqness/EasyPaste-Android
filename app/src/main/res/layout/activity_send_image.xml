@@ -3,36 +3,47 @@
     android:layout_width="match_parent"
     android:id="@+id/layoutProfile"
     android:background="#ffffff"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
 
     <ImageView
         android:id="@+id/image_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorWhite"
+        android:scaleType="fitCenter"/>
+
+    <TextView
+        android:id="@+id/tapToSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnSubmit"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:background="@drawable/image_select"
-        android:cropToPadding="false"
-        android:scaleType="fitCenter" />
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/raleway_medium"
+        android:textAlignment="center"
+        android:text="Tap to Select Image"
+        android:textSize="48sp" />
 
-    <Button android:id="@+id/btnSubmit"
-        android:layout_width="fill_parent"
+    <Button
+
+        android:id="@+id/btnSubmit"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="15dp"
-        android:text="Send Image to PC"
-        android:textColor="#fff"
-        android:drawablePadding="10dp"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
-        android:textSize="20sp"
         android:clickable="true"
-        android:elevation="4dp"
-        android:padding="20dp" />
+        android:gravity="bottom"
+        android:padding="20dp"
+        android:text="Send Image to PC"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        />
+
+
 
 </RelativeLayout>

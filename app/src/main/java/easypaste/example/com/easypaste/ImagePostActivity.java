@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -188,6 +189,8 @@ public class ImagePostActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        TextView textView = findViewById(R.id.tapToSelect);
+        textView.setVisibility(View.INVISIBLE);
 
         image_select_preview.setImageBitmap(thumbnail);
     }
@@ -201,6 +204,8 @@ public class ImagePostActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        TextView textView = findViewById(R.id.tapToSelect);
+        textView.setVisibility(View.INVISIBLE);
 
         image_select_preview.setImageBitmap(thumbnail);
     }
@@ -211,6 +216,7 @@ public class ImagePostActivity extends AppCompatActivity {
             bmp.compress(Bitmap.CompressFormat.JPEG,60, baos);
             byte[] imageBytes = baos.toByteArray();
             encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
             return encodedImage;
         }catch (Exception e){
 

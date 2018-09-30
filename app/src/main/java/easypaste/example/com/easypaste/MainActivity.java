@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static void HandlePayload(String payload_type, String payload_data){
         switch (payload_type){
             case "Acknowledgement" :
-                
+
                 break;
 
             case "ClipText":
