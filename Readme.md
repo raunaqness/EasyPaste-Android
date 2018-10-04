@@ -1,0 +1,2 @@
+# EasyPaste
+Ez fraaaaaand
